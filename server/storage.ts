@@ -1,7 +1,12 @@
-import { type Message, type InsertMessage, type Conversation, type InsertConversation } from "@shared/schema";
+import { type User, type InsertUser, type Message, type InsertMessage, type Conversation, type InsertConversation } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
+  // Users
+  createUser(user: InsertUser): Promise<User>;
+  getUserByPhone(phoneNumber: string): Promise<User | undefined>;
+  updateUserLogin(userId: string): Promise<void>;
+  
   // Messages
   createMessage(message: InsertMessage): Promise<Message>;
   getMessages(limit?: number): Promise<Message[]>;
@@ -9,27 +14,47 @@ export interface IStorage {
   
   // Conversations
   createConversation(conversation: InsertConversation): Promise<Conversation>;
-  getActiveConversation(): Promise<Conversation | undefined>;
+  getConversationsByUser(userId: string): Promise<Conversation[]>;
+  getActiveConversationByUser(userId: string): Promise<Conversation | undefined>;
   updateConversationLastMessage(conversationId: string): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
+  private users: Map<string, User>;
   private messages: Map<string, Message>;
   private conversations: Map<string, Conversation>;
 
   constructor() {
+    this.users = new Map();
     this.messages = new Map();
     this.conversations = new Map();
-    
-    // Create default active conversation
-    const defaultConversation: Conversation = {
-      id: randomUUID(),
-      studentName: "Medical Student",
-      status: "active",
+  }
+
+  // User methods
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const id = randomUUID();
+    const user: User = {
+      ...insertUser,
+      id,
+      isVerified: insertUser.isVerified || false,
       createdAt: new Date(),
-      lastMessageAt: new Date(),
+      lastLogin: new Date(),
     };
-    this.conversations.set(defaultConversation.id, defaultConversation);
+    this.users.set(id, user);
+    return user;
+  }
+
+  async getUserByPhone(phoneNumber: string): Promise<User | undefined> {
+    return Array.from(this.users.values())
+      .find(user => user.phoneNumber === phoneNumber);
+  }
+
+  async updateUserLogin(userId: string): Promise<void> {
+    const user = this.users.get(userId);
+    if (user) {
+      user.lastLogin = new Date();
+      this.users.set(userId, user);
+    }
   }
 
   async createMessage(insertMessage: InsertMessage): Promise<Message> {
@@ -52,8 +77,9 @@ export class MemStorage implements IStorage {
   }
 
   async getMessagesByConversation(conversationId: string): Promise<Message[]> {
-    // For simplicity, return all messages since we have one active conversation
-    return this.getMessages();
+    return Array.from(this.messages.values())
+      .filter(message => message.conversationId === conversationId)
+      .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
   }
 
   async createConversation(insertConversation: InsertConversation): Promise<Conversation> {
@@ -69,9 +95,15 @@ export class MemStorage implements IStorage {
     return conversation;
   }
 
-  async getActiveConversation(): Promise<Conversation | undefined> {
+  async getConversationsByUser(userId: string): Promise<Conversation[]> {
     return Array.from(this.conversations.values())
-      .find(conv => conv.status === "active");
+      .filter(conv => conv.userId === userId)
+      .sort((a, b) => b.lastMessageAt.getTime() - a.lastMessageAt.getTime());
+  }
+
+  async getActiveConversationByUser(userId: string): Promise<Conversation | undefined> {
+    return Array.from(this.conversations.values())
+      .find(conv => conv.userId === userId && conv.status === "active");
   }
 
   async updateConversationLastMessage(conversationId: string): Promise<void> {

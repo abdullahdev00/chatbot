@@ -6,7 +6,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { storage } from "./storage";
-import { insertMessageSchema } from "@shared/schema";
+import { insertMessageSchema, loginSchema } from "@shared/schema";
 import { z } from "zod";
 
 // Setup multer for audio file uploads
@@ -107,10 +107,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // REST API routes
-  app.get('/api/messages', async (req, res) => {
+  // Authentication routes
+  app.post('/api/auth/login', async (req, res) => {
     try {
-      const messages = await storage.getMessages();
+      const { phoneNumber, name } = loginSchema.parse(req.body);
+      
+      // Check if user exists
+      let user = await storage.getUserByPhone(phoneNumber);
+      
+      if (!user) {
+        // Create new user
+        user = await storage.createUser({
+          phoneNumber,
+          name: name || "Medical Student",
+          isVerified: true, // Simple auth - no OTP for now
+        });
+      } else {
+        // Update last login
+        await storage.updateUserLogin(user.id);
+      }
+
+      // Create session (simple token)
+      const token = Buffer.from(`${user.id}:${Date.now()}`).toString('base64');
+
+      // Create default conversation if none exists
+      let activeConv = await storage.getActiveConversationByUser(user.id);
+      if (!activeConv) {
+        activeConv = await storage.createConversation({
+          userId: user.id,
+          title: "Medical Consultation",
+          status: "active",
+        });
+      }
+
+      res.json({ 
+        user, 
+        token,
+        conversationId: activeConv.id 
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ error: 'Invalid request data', details: error.errors });
+      } else {
+        console.error('Login error:', error);
+        res.status(500).json({ error: 'Login failed' });
+      }
+    }
+  });
+
+  app.post('/api/auth/logout', async (req, res) => {
+    try {
+      // Simple logout - in real app would invalidate token
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: 'Logout failed' });
+    }
+  });
+
+  // REST API routes
+  app.get('/api/messages/:conversationId?', async (req, res) => {
+    try {
+      const { conversationId } = req.params;
+      let messages;
+      
+      if (conversationId) {
+        messages = await storage.getMessagesByConversation(conversationId);
+      } else {
+        messages = await storage.getMessages();
+      }
+      
       res.json(messages);
     } catch (error) {
       res.status(500).json({ error: 'Failed to fetch messages' });
