@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(210, 40%, 98%);
+  --foreground: hsl(210, 20%, 10%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(210, 20%, 15%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(210, 20%, 10%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(120, 40%, 50%);
+  --secondary-foreground: hsl(0, 0%, 100%);
+  --muted: hsl(210, 40%, 96%);
+  --muted-foreground: hsl(210, 20%, 45%);
+  --accent: hsl(174, 72%, 56%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(210, 40%, 90%);
+  --input: hsl(210, 40%, 95%);
+  --ring: hsl(207, 90%, 54%);
+  --chart-1: hsl(207, 90%, 54%);
+  --chart-2: hsl(159, 100%, 36%);
+  --chart-3: hsl(42, 93%, 56%);
+  --chart-4: hsl(147, 79%, 42%);
+  --chart-5: hsl(341, 75%, 51%);
+  --sidebar: hsl(0, 0%, 100%);
+  --sidebar-foreground: hsl(210, 20%, 15%);
+  --sidebar-primary: hsl(207, 90%, 54%);
+  --sidebar-primary-foreground: hsl(0, 0%, 100%);
+  --sidebar-accent: hsl(210, 40%, 96%);
+  --sidebar-accent-foreground: hsl(210, 20%, 45%);
+  --sidebar-border: hsl(210, 40%, 90%);
+  --sidebar-ring: hsl(207, 90%, 54%);
+  --medical-blue: hsl(207, 90%, 54%);
+  --medical-green: hsl(122, 39%, 49%);
+  --medical-teal: hsl(174, 72%, 56%);
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
+  --radius: 1rem;
+  --shadow-2xs: 0px 2px 0px 0px hsl(207, 90%, 54% / 0.00);
+  --shadow-xs: 0px 2px 0px 0px hsl(207, 90%, 54% / 0.00);
+  --shadow-sm: 0px 2px 0px 0px hsl(207, 90%, 54% / 0.00), 0px 1px 2px -1px hsl(207, 90%, 54% / 0.00);
+  --shadow: 0px 2px 0px 0px hsl(207, 90%, 54% / 0.00), 0px 1px 2px -1px hsl(207, 90%, 54% / 0.00);
+  --shadow-md: 0px 2px 0px 0px hsl(207, 90%, 54% / 0.00), 0px 2px 4px -1px hsl(207, 90%, 54% / 0.00);
+  --shadow-lg: 0px 2px 0px 0px hsl(207, 90%, 54% / 0.00), 0px 4px 6px -1px hsl(207, 90%, 54% / 0.00);
+  --shadow-xl: 0px 2px 0px 0px hsl(207, 90%, 54% / 0.00), 0px 8px 10px -1px hsl(207, 90%, 54% / 0.00);
+  --shadow-2xl: 0px 2px 0px 0px hsl(207, 90%, 54% / 0.00);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+}
+
+.dark {
+  --background: hsl(0, 0%, 0%);
+  --foreground: hsl(200, 7%, 91%);
+  --card: hsl(228, 10%, 10%);
+  --card-foreground: hsl(0, 0%, 85%);
+  --popover: hsl(0, 0%, 0%);
+  --popover-foreground: hsl(200, 7%, 91%);
+  --primary: hsl(204, 88%, 53%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(195, 15%, 95%);
+  --secondary-foreground: hsl(210, 25%, 8%);
+  --muted: hsl(0, 0%, 9%);
+  --muted-foreground: hsl(210, 3%, 46%);
+  --accent: hsl(206, 70%, 8%);
+  --accent-foreground: hsl(204, 88%, 53%);
+  --destructive: hsl(356, 91%, 54%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(210, 5%, 15%);
+  --input: hsl(208, 28%, 18%);
+  --ring: hsl(207, 90%, 54%);
+  --medical-blue: hsl(207, 90%, 54%);
+  --medical-green: hsl(122, 39%, 49%);
+  --medical-teal: hsl(174, 72%, 56%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+}
+
+@layer utilities {
+  .chat-bubble-user {
+    background: linear-gradient(135deg, var(--primary), var(--medical-teal));
+    border-radius: 1.25rem 1.25rem 0.5rem 1.25rem;
+  }
+  
+  .chat-bubble-agent {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1.25rem 1.25rem 1.25rem 0.5rem;
+  }
+  
+  .pulse-dot {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .waveform-bar {
+    background: var(--medical-teal);
+    animation: wave 1.5s ease-in-out infinite alternate;
+  }
+  
+  @keyframes wave {
+    0% { height: 20%; }
+    100% { height: 100%; }
+  }
+  
+  .recording-pulse {
+    animation: recording-pulse 1s ease-in-out infinite;
+  }
+  
+  @keyframes recording-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  
+  .slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .waveform {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 32px;
+  }
+  
+  .waveform-bar {
+    width: 3px;
+    background: var(--medical-teal);
+    border-radius: 2px;
+    transition: height 0.1s ease;
+  }
+}
