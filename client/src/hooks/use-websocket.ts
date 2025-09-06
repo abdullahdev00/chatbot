@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Message } from "@shared/schema";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface WebSocketMessage {
   type: string;
@@ -19,6 +20,7 @@ export function useWebSocket() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [socket, setSocket] = useState<WebSocket | null>(null);
+  const { conversationId } = useAuth();
 
   const connect = useCallback(() => {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
@@ -78,15 +80,16 @@ export function useWebSocket() {
   }, []);
 
   const sendMessage = useCallback((messageData: SendMessageData) => {
-    if (socket && socket.readyState === WebSocket.OPEN) {
+    if (socket && socket.readyState === WebSocket.OPEN && conversationId) {
       socket.send(JSON.stringify({
         type: 'send_message',
-        ...messageData
+        ...messageData,
+        conversationId
       }));
     } else {
-      console.error('WebSocket is not connected');
+      console.error('WebSocket is not connected or no conversation ID');
     }
-  }, [socket]);
+  }, [socket, conversationId]);
 
   return {
     messages,

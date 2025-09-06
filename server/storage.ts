@@ -36,6 +36,7 @@ export class MemStorage implements IStorage {
     const user: User = {
       ...insertUser,
       id,
+      name: insertUser.name || null,
       isVerified: insertUser.isVerified || false,
       createdAt: new Date(),
       lastLogin: new Date(),
@@ -63,6 +64,9 @@ export class MemStorage implements IStorage {
       ...insertMessage,
       id,
       messageType: insertMessage.messageType || "text",
+      audioUrl: insertMessage.audioUrl || null,
+      audioDuration: insertMessage.audioDuration || null,
+      isFromWebhook: insertMessage.isFromWebhook || false,
       timestamp: new Date(),
     };
     this.messages.set(id, message);
@@ -87,6 +91,7 @@ export class MemStorage implements IStorage {
     const conversation: Conversation = {
       ...insertConversation,
       id,
+      title: insertConversation.title || "New Conversation",
       status: insertConversation.status || "active",
       createdAt: new Date(),
       lastMessageAt: new Date(),
