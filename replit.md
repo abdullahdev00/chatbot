@@ -7,6 +7,23 @@ This is a real-time medical chat application built with React, Express, and WebS
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Authentication system: Phone number-based login with user-specific conversations.
+
+## Demo Credentials for Testing
+
+The application includes demo users for easy testing:
+- **Demo User 1**: `+923001234567` (Dr. Ahmed Khan) - Has sample conversation
+- **Demo User 2**: `+923009876543` (Medical Student Sara) - Fresh conversation
+
+## Recent Changes
+
+### Authentication System (Added: Sept 6, 2025)
+- Added phone number authentication with medical theme
+- User-specific chat conversations and message history
+- Session management with localStorage persistence
+- Logout functionality in chat header dropdown
+- Protected routes requiring login
+- Demo users and sample conversations for testing
 
 ## System Architecture
 

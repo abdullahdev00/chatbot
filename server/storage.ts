@@ -28,6 +28,81 @@ export class MemStorage implements IStorage {
     this.users = new Map();
     this.messages = new Map();
     this.conversations = new Map();
+    
+    // Add demo users for testing
+    this.createDemoUsers();
+  }
+
+  private createDemoUsers() {
+    // Demo User 1
+    const demoUser1: User = {
+      id: "demo-user-1",
+      phoneNumber: "+923001234567",
+      name: "Dr. Ahmed Khan",
+      isVerified: true,
+      createdAt: new Date(),
+      lastLogin: new Date(),
+    };
+    this.users.set(demoUser1.id, demoUser1);
+
+    // Demo User 2
+    const demoUser2: User = {
+      id: "demo-user-2", 
+      phoneNumber: "+923009876543",
+      name: "Medical Student Sara",
+      isVerified: true,
+      createdAt: new Date(),
+      lastLogin: new Date(),
+    };
+    this.users.set(demoUser2.id, demoUser2);
+
+    // Create demo conversations
+    const demoConv1: Conversation = {
+      id: "demo-conv-1",
+      userId: demoUser1.id,
+      title: "Medication Inquiry",
+      status: "active",
+      createdAt: new Date(),
+      lastMessageAt: new Date(),
+    };
+    this.conversations.set(demoConv1.id, demoConv1);
+
+    const demoConv2: Conversation = {
+      id: "demo-conv-2",
+      userId: demoUser2.id,
+      title: "Medical Consultation",
+      status: "active", 
+      createdAt: new Date(),
+      lastMessageAt: new Date(),
+    };
+    this.conversations.set(demoConv2.id, demoConv2);
+
+    // Add demo messages
+    const demoMessage1: Message = {
+      id: "demo-msg-1",
+      conversationId: demoConv1.id,
+      content: "Hello Dr. MediBot, I need information about antibiotics.",
+      sender: "user",
+      messageType: "text",
+      audioUrl: null,
+      audioDuration: null,
+      timestamp: new Date(Date.now() - 300000), // 5 minutes ago
+      isFromWebhook: false,
+    };
+    this.messages.set(demoMessage1.id, demoMessage1);
+
+    const demoMessage2: Message = {
+      id: "demo-msg-2",
+      conversationId: demoConv1.id,
+      content: "Hello! I'm here to help with antibiotic information. What specific information do you need?",
+      sender: "agent",
+      messageType: "text",
+      audioUrl: null,
+      audioDuration: null,
+      timestamp: new Date(Date.now() - 280000), // 4 min 40 sec ago
+      isFromWebhook: true,
+    };
+    this.messages.set(demoMessage2.id, demoMessage2);
   }
 
   // User methods
